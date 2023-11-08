@@ -4,7 +4,7 @@ set -euo pipefail
 export VAULT_INIT_OUTPUT=vault.json
 
 tput setaf 12 && echo "############## Initializing Vault ##############"
-export VAULT_ADDR=http://localhost:8200
+export VAULT_ADDR=${VAULT_ADDR:-http://localhost:8200}
 sleep 5
 vault operator init -format=json -n 1 -t 1 > ${VAULT_INIT_OUTPUT}
 
@@ -12,7 +12,7 @@ export VAULT_TOKEN=$(cat ${VAULT_INIT_OUTPUT} | jq -r '.root_token')
 tput setaf 12 && echo "############## Root VAULT TOKEN is: $VAULT_TOKEN ##############"
 
 tput setaf 12 && echo "############## Unseal Vault ##############"
-export VAULT_ADDR=http://localhost:8200
+export VAULT_ADDR=${VAULT_ADDR:-http://localhost:8200}
 
 export unseal_key=$(cat ${VAULT_INIT_OUTPUT} | jq -r '.unseal_keys_b64[0]')
 vault operator unseal ${unseal_key}

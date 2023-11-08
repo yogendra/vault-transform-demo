@@ -4,7 +4,7 @@ set -euo pipefail
 DIR="$( cd .. && pwd )"
 
 export VAULT_INIT_OUTPUT=vault.json
-export VAULT_ADDR=http://localhost:8200
+export VAULT_ADDR=${VAULT_ADDR:-http://localhost:8200}
 export VAULT_TOKEN=$(cat ${VAULT_INIT_OUTPUT} | jq -r '.root_token')
 
 tput setaf 12 && echo "############## Enable approle auth on Vault ##############"
@@ -28,4 +28,4 @@ SECRET_ID=$(vault write -wrap-ttl=60s -force -format=json auth/approle/role/tran
 echo -n $SECRET_ID > ../vault-agent/secret_id
 
 tput setaf 12 && echo "############## Start Vault agent and Transform demo app ##############"; tput sgr0
-docker-compose --profile frontend --profile backend up --detach
+[[ $SKIP_DOCKER_COMPOSE == "1" ]] || docker-compose --profile frontend --profile backend up --detach
