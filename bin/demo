@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT=${BASH_SOURCE[0]}
+export PROJECT_DIR=${PROJECT_DIR:-$(cd $SCRIPT_DIR/..; pwd)}
+
+(
+  set +ex
+  cd $PROJECT_DIR/docker-compose
+  docker-compose down --remove-orphans -v
+  rm scripts/vault.json vault-agent/token vault-agent/role_id vault-agent/secret_id || echo "no leftovers"
+  docker-compose up -d
+  open http://localhost:8200
+  open http://localhost:15433
+  open http://localhost:7070
+  open http://localhost:3000
+  docker-compose logs -f
+)
+
+
+
+
+
+
+
+
