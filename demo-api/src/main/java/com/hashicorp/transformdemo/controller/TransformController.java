@@ -55,13 +55,13 @@ public class TransformController {
     }
 
     @PostMapping(value = "/api/v1/transit/add-user")
-    public Object addOneEncryptedUser(@RequestParam String username, String password, String email, String creditcard)  {
+    public Object addOneEncryptedUser(@RequestBody User user)  {
         TransitUtil transitUtil = new TransitUtil();
         u = new ApiAppUtil().userSetup(
-                username,
-                transitUtil.encrypt(password),
-                transitUtil.encrypt(email),
-                transitUtil.encrypt(creditcard),
+                user.getUsername(),
+                transitUtil.encrypt(user.getPassword()),
+                transitUtil.encrypt(user.getEmail()),
+                transitUtil.encrypt(user.getCreditcard()),
                 "transit"
         );
         return userJpaRepository.save(u);
