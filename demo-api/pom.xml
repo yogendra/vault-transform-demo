@@ -56,6 +56,11 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+          <groupId>com.yugabyte</groupId>
+          <artifactId>jdbc-yugabytedb</artifactId>
+          <version>42.3.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
@@ -66,6 +71,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <dependencyManagement>
