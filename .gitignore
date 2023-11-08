@@ -43,3 +43,5 @@ token
 
 /docker-compose/scripts/vault.json
 /docker-compose/vault/audit_logs
+/bin/vault
+/.vscode/settings.json
