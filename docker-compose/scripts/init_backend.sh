@@ -45,14 +45,14 @@ vault secrets enable database
 
 vault write database/roles/demoapp \
 db_name=yb-demo-db \
-creation_statements="CREATE USER {{name}} WITH PASSWORD '{{password}}';GRANT SELECT,INSERT,UPDATE ON users_tokenization TO {{name}};" \
+creation_statements="CREATE USER \"{{name}}\" WITH PASSWORD '{{password}}' VALID UNTIL '{{expiration}}' ;GRANT SELECT,INSERT,UPDATE ON users_tokenization TO \"{{name}}\";" \
 default_ttl="8h" \
 max_ttl="8h"
 
 vault write database/config/yb-demo-db \
 plugin_name=postgresql-database-plugin \
 connection_url="postgresql://{{username}}:{{password}}@yugabytedb:5433/demo" \
-allowed_roles="demoapp" \q
+allowed_roles="demoapp" \
 username="yugabyte" \
 password="yugabyte"
 
