@@ -1,0 +1,13 @@
+{
+  "id": "user-tokens",
+  "name": "User Tokens",
+  "connectionId": "yugabytedb",
+  "queryText": "select flag, username, email, creditcard, password from users_tokenization;",
+  "createdBy": "demo",
+  "acl": [
+    {
+      "groupId": "__EVERYONE__",
+      "write": true
+    }
+  ]
+}

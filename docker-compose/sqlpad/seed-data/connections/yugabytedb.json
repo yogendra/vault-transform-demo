@@ -1,0 +1,10 @@
+{
+  "id": "yugabytedb",
+  "name": "YugabyteDB Connection",
+  "driver": "postgres",
+  "host": "yugabytedb",
+  "port": "5433",
+  "database": "demo",
+  "username": "yugabyte",
+  "password": "yugabyte"
+}
