@@ -43,7 +43,5 @@ token
 
 /docker-compose/scripts/vault.json
 /docker-compose/vault/audit_logs
-
-.direnv/
-.env
-bin/vault
+/bin/vault
+/.vscode/settings.json
