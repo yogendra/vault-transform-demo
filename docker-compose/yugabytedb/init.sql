@@ -1,4 +1,4 @@
-create table
+create table if not exists
     users_tokenization (
         id varchar(50) primary key,
         username varchar(50),
@@ -8,6 +8,6 @@ create table
         flag varchar(30)
     ) SPLIT INTO 1 TABLETS;
 
-create index idx_user_tokenization on users_tokenization(username) ;
+create index if not exists idx_user_tokenization on users_tokenization(username) ;
 
-create index idx_user_email on users_tokenization(email) ;
+create index if not exists idx_user_email on users_tokenization(email) ;
