@@ -23,7 +23,7 @@ show-members:
 
 logs:
 	cd docker-compose \
-    && docker-compose logs -f
+    && docker-compose --profile backend --profile frontend logs -f
 
 ui:
 	open http://localhost:7071
