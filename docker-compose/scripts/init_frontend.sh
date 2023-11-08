@@ -15,7 +15,7 @@ vault write auth/approle/role/transform-demo-api \
 secret_id_ttl=10m \
 token_ttl=2h \
 token_max_ttl=8h \
-policies=payments
+policies=admin
 
 tput setaf 12 && echo "############## Fetch approle RoleID ##############"
 
