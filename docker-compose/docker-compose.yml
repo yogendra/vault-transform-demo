@@ -1,5 +1,5 @@
 version: '3.7'
-
+name: vault-transform-demo
 networks:
   vault-demo:
     ipam:
@@ -158,3 +158,21 @@ services:
     depends_on:
       yugabytedb:
         condition: service_healthy
+  sqlpad:
+    # To use Dockerfile at root of this project, use build instead of image
+    # build: ../../
+    image: sqlpad/sqlpad:6.11.2
+    hostname: 'sqlpad'
+    container_name: sqlpad
+    ports:
+      - '3000:3000'
+    environment:
+      SQLPAD_ADMIN: 'admin'
+      SQLPAD_ADMIN_PASSWORD: 'passw0rd'
+      SQLPAD_APP_LOG_LEVEL: info
+      SQLPAD_WEB_LOG_LEVEL: warn
+      SQLPAD_SEED_DATA_PATH: /etc/sqlpad/seed-data
+    volumes:
+      - ./sqlpad/seed-data:/etc/sqlpad/seed-data
+    networks:
+      - vault-demo
