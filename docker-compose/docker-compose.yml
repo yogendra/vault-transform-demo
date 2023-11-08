@@ -9,7 +9,6 @@ networks:
 
 services:
   vault:
-    profiles: ["backend" ]
     depends_on:
       yugabytedb-init:
         condition: service_completed_successfully
@@ -29,8 +28,33 @@ services:
       - VAULT_LICENSE=${VAULT_LICENSE}
     networks:
       - vault-demo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://vault:8200"]
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  vault-init:
+    depends_on:
+      vault:
+        condition: service_healthy
+    build:
+      context: ./vault-init
+      dockerfile: Dockerfile
+    restart: on-failure
+    volumes:
+      - ./:/vault
+    container_name: vault-init
+    entrypoint: ./init.sh
+    working_dir: /vault/scripts
+    environment:
+      - VAULT_LICENSE=${VAULT_LICENSE}
+      - VAULT_ADDR=http://vault:8200
+      - TERM=xterm-256color
+      - SKIP_DOCKER_COMPOSE=1
+    networks:
+      - vault-demo
   yugabytedb:
-    profiles: ["backend"]
     image: yogendra/yugabyte:2.18.4.0-b52
     container_name: yugabytedb
     restart: always
@@ -52,10 +76,11 @@ services:
       retries: 3
 
   vault-agent:
-    profiles: ["frontend"]
     image: hashicorp/vault-enterprise:latest
     restart: always
-    depends_on: [ vault ]
+    depends_on:
+      vault-init:
+        condition: service_completed_successfully
     volumes:
       - ./vault-agent/:/vault/config
     ports:
@@ -68,8 +93,13 @@ services:
       - VAULT_LICENSE=${VAULT_LICENSE}
     networks:
       - vault-demo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://vault:8100"]
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 3
   transform-demo-api:
-    profiles: ["frontend"]
     image: nicklhw/transform-demo-api
     container_name: transform-demo-api
     restart: always
@@ -80,12 +110,11 @@ services:
       - "8081:8080"
     environment:
       - SPRING_CLOUD_VAULT_HOST=vault-agent
-      - SPRING_DATASOURCE_URL=jdbc:yugabytedb://demo@passw0rd:yugabytedb:5433/demo
+      - SPRING_DATASOURCE_URL=jdbc:yugabytedb://yugabytedb:5433/demo
     entrypoint: "java -jar /app/transform-demo-api-0.0.1-SNAPSHOT.jar"
     networks:
       - vault-demo
   transform-demo-ui:
-    profiles: [ "frontend" ]
     image: nicklhw/transform-demo-ui
     container_name: transform-demo-ui
     restart: always
@@ -100,7 +129,6 @@ services:
     networks:
       - vault-demo
   yugabytedb-init:
-    profiles: ["backend"]
     image: yogendra/yugabyte:2.18.4.0-b52
     container_name: yugabytedb-init
     restart: on-failure
@@ -130,28 +158,3 @@ services:
     depends_on:
       yugabytedb:
         condition: service_healthy
-
-  yugabytedb-sample:
-    profiles: ["backend"]
-    image: yogendra/yugabyte:2.18.4.0-b52
-    container_name: yugabytedb-sample
-    restart: on-failure
-    environment:
-    - YSQL_USER=demo
-    - YSQL_PASSWORD=passw0rd
-    - YSQL_DB=demo
-    command:
-    - bash
-    - -c
-    - |
-      export PGPASSWORD=$$YSQL_PASSWORD
-      export PGUSER=$$YSQL_USER
-      export PGDATABASE=$$YSQL_DB
-      export PGHOST=yugabytedb
-      export PGPORT=5433
-      bin/ysqlsh -a -c "select version(); select 'Hello, World!' greeting;"
-    networks:
-      - vault-demo
-    depends_on:
-      yugabytedb-init:
-        condition: service_completed_successfully
