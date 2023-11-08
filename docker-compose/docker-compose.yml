@@ -9,8 +9,10 @@ networks:
 
 services:
   vault:
-    profiles: ["backend"]
-    depends_on: [ mysql ]
+    profiles: ["backend" ]
+    depends_on:
+      yugabytedb-init:
+        condition: service_completed_successfully
     image: hashicorp/vault-enterprise:latest
     restart: always
     volumes:
@@ -27,20 +29,28 @@ services:
       - VAULT_LICENSE=${VAULT_LICENSE}
     networks:
       - vault-demo
-  mysql:
+  yugabytedb:
     profiles: ["backend"]
-    image: mysql:8
-    container_name: mysql
+    image: yogendra/yugabyte:2.18.4.0-b52
+    container_name: yugabytedb
     restart: always
-    volumes:
-      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: bin/yugabyted start --daemon=false
     ports:
-      - "3306:3306/tcp"
+      - "5433:5433/tcp"
+      - "15433:15433/tcp"
     environment:
-      - MYSQL_DATABASE=demo
-      - MYSQL_ROOT_PASSWORD=passw0rd
+      - YSQL_USER=demo
+      - YSQL_PASSWORD=passw0rd
+      - YSQL_DB=demo
     networks:
       - vault-demo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://yugabytedb:15433"]
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   vault-agent:
     profiles: ["frontend"]
     image: hashicorp/vault-enterprise:latest
@@ -70,7 +80,7 @@ services:
       - "8081:8080"
     environment:
       - SPRING_CLOUD_VAULT_HOST=vault-agent
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/demo?allowPublicKeyRetrieval=true&useSSL=false
+      - SPRING_DATASOURCE_URL=jdbc:yugabytedb://demo@passw0rd:yugabytedb:5433/demo
     entrypoint: "java -jar /app/transform-demo-api-0.0.1-SNAPSHOT.jar"
     networks:
       - vault-demo
@@ -89,6 +99,59 @@ services:
     entrypoint: "java -jar /app/transform-demo-ui-0.0.1-SNAPSHOT.jar"
     networks:
       - vault-demo
+  yugabytedb-init:
+    profiles: ["backend"]
+    image: yogendra/yugabyte:2.18.4.0-b52
+    container_name: yugabytedb-init
+    restart: on-failure
+    environment:
+    - YSQL_USER=demo
+    - YSQL_PASSWORD=passw0rd
+    - YSQL_DB=demo
+    volumes:
+    - ./yugabytedb/init.sql:/init.sql
+    command:
+    - bash
+    - -c
+    - |
+      echo -n "Waiting for yugabytedb to be ready"
+      export PGPASSWORD=$$YSQL_PASSWORD
+      export PGUSER=$$YSQL_USER
+      export PGDATABASE=$$YSQL_DB
+      export PGHOST=yugabytedb
+      export PGPORT=5433
 
+      until postgres/bin/pg_isready -t 1  &> /dev/null; do echo -n '.'; done
+      echo " OK"
+      bin/ysqlsh -c 'select version(); select * from yb_servers(); select * from inet_server_addr();'
+      bin/ysqlsh -a -f /init.sql
+    networks:
+      - vault-demo
+    depends_on:
+      yugabytedb:
+        condition: service_healthy
 
-
+  yugabytedb-sample:
+    profiles: ["backend"]
+    image: yogendra/yugabyte:2.18.4.0-b52
+    container_name: yugabytedb-sample
+    restart: on-failure
+    environment:
+    - YSQL_USER=demo
+    - YSQL_PASSWORD=passw0rd
+    - YSQL_DB=demo
+    command:
+    - bash
+    - -c
+    - |
+      export PGPASSWORD=$$YSQL_PASSWORD
+      export PGUSER=$$YSQL_USER
+      export PGDATABASE=$$YSQL_DB
+      export PGHOST=yugabytedb
+      export PGPORT=5433
+      bin/ysqlsh -a -c "select version(); select 'Hello, World!' greeting;"
+    networks:
+      - vault-demo
+    depends_on:
+      yugabytedb-init:
+        condition: service_completed_successfully
