@@ -28,4 +28,4 @@ SECRET_ID=$(vault write -wrap-ttl=60s -force -format=json auth/approle/role/tran
 echo -n $SECRET_ID > ../vault-agent/secret_id
 
 tput setaf 12 && echo "############## Start Vault agent and Transform demo app ##############"; tput sgr0
-docker-compose --profile frontend up --detach
+docker-compose --profile frontend --profile backend up --detach
