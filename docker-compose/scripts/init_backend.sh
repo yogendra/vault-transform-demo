@@ -44,17 +44,17 @@ sleep 10
 vault secrets enable database
 
 vault write database/roles/demoapp \
-db_name=mysql-demo-db \
-creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT,INSERT,UPDATE ON demo.users_tokenization TO '{{name}}'@'%';" \
+db_name=yb-demo-db \
+creation_statements="CREATE USER {{name}} WITH PASSWORD '{{password}}';GRANT SELECT,INSERT,UPDATE ON users_tokenization TO {{name}};" \
 default_ttl="8h" \
 max_ttl="8h"
 
-vault write database/config/mysql-demo-db \
-plugin_name=mysql-legacy-database-plugin \
-connection_url="{{username}}:{{password}}@tcp(mysql:3306)/" \
-allowed_roles="demoapp" \
-username="root" \
-password="passw0rd"
+vault write database/config/yb-demo-db \
+plugin_name=postgresql-database-plugin \
+connection_url="postgresql://{{username}}:{{password}}@yugabytedb:5433/demo" \
+allowed_roles="demoapp" \q
+username="yugabyte" \
+password="yugabyte"
 
 tput setaf 12 && echo "############## Setup Transit secret engine ##############"
 
@@ -138,24 +138,24 @@ allowed_roles=payments
 
 tput setaf 12 && echo "############## Setup Transform secret engine for Tokenization ##############"
 
-vault write transform/stores/mysql \
+vault write transform/stores/yugabyte \
 type=sql \
-driver=mysql \
+driver=postgres \
 supported_transformations=tokenization \
-connection_string='{{username}}:{{password}}@tcp(mysql:3306)/demo?parseTime=true' \
-username=root \
-password=passw0rd
+connection_string='postgresql://{{username}}:{{password}}@yugabytedb:5433/demo' \
+username=yugabyte \
+password=yugabyte
 
-vault write transform/stores/mysql/schema transformation_type=tokenization \
-username=root password=passw0rd
+vault write transform/stores/yugabyte/schema transformation_type=tokenization \
+username=yugabyte password=yugabyte
 
 vault write transform/transformations/tokenization/default-tokenization \
 allowed_roles=payments \
-stores=mysql
+stores=yugabyte
 
 vault write transform/transformations/tokenization/convergent-tokenization \
 allowed_roles=payments \
 convergent=true
-stores=mysql
+stores=yugabyte
 
 tput setaf 12 && echo "############## Please Run: export VAULT_TOKEN=${VAULT_TOKEN} ##############"
