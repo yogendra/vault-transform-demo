@@ -18,7 +18,6 @@ public class SampleDataLoader implements ApplicationListener<ApplicationReadyEve
   private final UserJpaRepository repository;
 
 
-
   public SampleDataLoader(Config config, TransformController controller,
     UserJpaRepository repository) {
     this.config = config;
@@ -27,56 +26,59 @@ public class SampleDataLoader implements ApplicationListener<ApplicationReadyEve
   }
 
   @Override
-  public void onApplicationEvent(
-    ApplicationReadyEvent applicationReadyEvent) {
-    if(!config.isSkipLoadingSampleData()){
+  public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+    if (!config.isSkipLoadingSampleData()) {
       log.info("Skip loading sample data");
-      return ;
+      return;
     }
     int id = 1;
-    if(!repository.existsUserByUsername(userName(id))) {
+    if (!repository.existsUserByUsername(userName(id))) {
       log.info("Adding Sample Data for User: {}", userName(id));
       controller.addOneEncryptedUser(userName(id), password(id), email(id), creditcard(id));
     }
     ++id;
-    if(!repository.existsUserByUsername(userName(id))) {
+    if (!repository.existsUserByUsername(userName(id))) {
       log.info("Adding Sample Data for User: {}", userName(id));
       controller.addOneSimplestTransformedUser(userName(id), password(id), email(id),
         creditcard(id));
     }
     ++id;
-    if(!repository.existsUserByUsername(userName(id))) {
+    if (!repository.existsUserByUsername(userName(id))) {
       log.info("Adding Sample Data for User: {}", userName(id));
       controller.addOneSimpleTransformedUser(userName(id), password(id), email(id), creditcard(id));
     }
     ++id;
-    if(!repository.existsUserByUsername(userName(id))) {
+    if (!repository.existsUserByUsername(userName(id))) {
       log.info("Adding Sample Data for User: {}", userName(id));
       controller.addOneTransformedUser(userName(id), password(id), email(id), creditcard(id));
     }
     ++id;
-    if(!repository.existsUserByUsername(userName(id))) {
+    if (!repository.existsUserByUsername(userName(id))) {
       log.info("Adding Sample Data for User: {}", userName(id));
       controller.addOneDefaultTokenizedUser(userName(id), password(id), email(id), creditcard(id));
     }
     ++id;
-    if(!repository.existsUserByUsername(userName(id))) {
+    if (!repository.existsUserByUsername(userName(id))) {
       log.info("Adding Sample Data for User: {}", userName(id));
 
       controller.addOneConvergentTokenizedUser(userName(id), password(id), email(id),
         creditcard(id));
     }
   }
-  private String userName(int id){
+
+  private String userName(int id) {
     return format("User %1$s", id);
   }
-  private String password(int id){
+
+  private String password(int id) {
     return format("User%1$sPassw0rd", id);
   }
-  private String creditcard(int id){
-    return format("1111-2222-3333-4444", id);
+
+  private String creditcard(int id) {
+    return format("%1$04d-2222-3333-4444", id);
   }
-  private String email(int id){
+
+  private String email(int id) {
     return format("user%1$s@example.com", id);
   }
 }
