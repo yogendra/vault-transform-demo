@@ -26,7 +26,6 @@ SQLPad         : http://localhost:3000
 
 Useful Commands
 $COMMAND add-sample-data  - add sample data
-$COMMAND clean            - stop containers, delete state and data
 $COMMAND help             - this screen
 $COMMAND start            - start infra and apps
 $COMMAND start-apps       - start infra containers
@@ -81,14 +80,7 @@ function stop(){
     set +ex
     banner Stop
     docker-compose -f $DOCKER_COMPOSE_FILE down --remove-orphans -v
-
-}
-
-function clean(){
-  set +ex
-  stop
-  banner clean
-  rm $DOCKER_COMPOSE_DIR/scripts/vault.json $DOCKER_COMPOSE_DIR/vault-agent/token $DOCKER_COMPOSE_DIR/vault-agent/role_id $DOCKER_COMPOSE_DIR/vault-agent/secret_id || echo "no leftovers"
+    rm $DOCKER_COMPOSE_DIR/scripts/vault.json $DOCKER_COMPOSE_DIR/vault-agent/token $DOCKER_COMPOSE_DIR/vault-agent/role_id $DOCKER_COMPOSE_DIR/vault-agent/secret_id || echo "no leftovers"
 }
 
 OP=${1:-start}; shift
