@@ -29,6 +29,10 @@ public class SampleDataLoader implements ApplicationListener<ApplicationReadyEve
   @Override
   public void onApplicationEvent(
     ApplicationReadyEvent applicationReadyEvent) {
+    if(!config.isSkipLoadingSampleData()){
+      log.info("Skip loading sample data");
+      return ;
+    }
     int id = 1;
     if(!repository.existsUserByUsername(userName(id))) {
       log.info("Adding Sample Data for User: {}", userName(id));

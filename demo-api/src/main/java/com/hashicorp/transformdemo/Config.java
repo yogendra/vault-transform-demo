@@ -11,4 +11,5 @@ import org.springframework.context.annotation.Configuration;
 @NoArgsConstructor
 public class Config {
   private String keyName = "my-key";
+  private boolean skipLoadingSampleData = false;
 }
