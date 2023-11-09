@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 set -Eeuo pipefail
+COMMAND=$0
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPT=${BASH_SOURCE[0]}
+
 export PROJECT_DIR=${PROJECT_DIR:-$(cd $SCRIPT_DIR/..; pwd)}
 export DOCKER_COMPOSE_DIR=$PROJECT_DIR/docker-compose
 export DOCKER_COMPOSE_FILE=$DOCKER_COMPOSE_DIR/docker-compose.yml
@@ -12,13 +14,26 @@ function banner(){
     echo "$@"
     echo ================================================================================
 }
-function info(){
+
+function help(){
   banner Demo Env Information
   cat <<EOF
+Application and Consoles
 Vault UI       : http://localhost:8200
 YugabyteDB UI  : http://localhost:15433
 Demo App UI    : http://localhost:7070
 SQLPad         : http://localhost:3000
+
+Useful Commands
+$COMMAND add-sample-data  - add sample data
+$COMMAND clean            - stop containers, delete state and data
+$COMMAND help             - this screen
+$COMMAND start            - start infra and apps
+$COMMAND start-apps       - start infra containers
+$COMMAND start-infra      - start infra containers
+$COMMAND stop             - stop demo containers
+$COMMAND truncate-data    - truncate database table
+$COMMAND watch            - look are container logs
 EOF
 
 }
@@ -28,8 +43,11 @@ function start(){
   start-infra
   start-apps
   sleep 10
-  info
-  watch
+  help
+}
+function status(){
+  banner Status
+  docker-compose -f $DOCKER_COMPOSE_FILE top
 }
 function start-infra(){
   banner Start Infra
@@ -49,15 +67,15 @@ function add-sample-data(){
   curl 'http://localhost:7070/encrypt?simplest-transformation=1&username=Yogi%20simplest-transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=4111-2222-3333-4444' -X POST
   curl 'http://localhost:7070/encrypt?default-tokenization=1&username=Yogi%20default-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=2111-5222-3333-4444' -X POST
   curl 'http://localhost:7070/encrypt?convergent-tokenization=1&username=Yogi%20convergent-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=6111-2222-3333-4444' -X POST
-
+}
+function truncate-data(){
+  docker-compose -f $DOCKER_COMPOSE_FILE exec -e PGPASSWORD=yugabyte -it yugabytedb ysqlsh -h yugabytedb -d demo -U yugabyte -c 'TRUNCATE TABLE users_tokenization;'
 }
 
 function watch(){
     banner Watch logs
     docker-compose -f $DOCKER_COMPOSE_FILE logs -f
 }
-
-
 
 function stop(){
     set +ex
