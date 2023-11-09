@@ -18,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 public class UiService {
 
-  private String apiAddress =
+  private final String apiAddress =
     System.getenv("API_ADDRESS") != null ? System.getenv("API_ADDRESS") : "http://localhost:8081";
   private final RestTemplateBuilder restTemplateBuilder;
 
@@ -31,14 +31,14 @@ public class UiService {
     return restTemplateBuilder.build();
   }
 
-  public User[] getTransformedUsers() throws Exception {
+  public User[] getTransformedUsers() {
     var result = rt().getForObject(apiAddress + "/api/v1/get-transformed-users", User[].class);
     log.info("getTransformedUsers:{}", (Object)result);
 
     return result;
   }
 
-  public User[] getSimpleTransformedUsers() throws Exception {
+  public User[] getSimpleTransformedUsers() {
     var result = rt().getForObject(apiAddress + "/api/v1/get-simple-transformed-users",
       User[].class);
 
@@ -46,7 +46,7 @@ public class UiService {
     return result;
   }
 
-  public User[] getSimplestTransformedUsers() throws Exception {
+  public User[] getSimplestTransformedUsers() {
     var result = rt().getForObject(apiAddress + "/api/v1/get-simplest-transformed-users",
       User[].class);
 
@@ -55,20 +55,20 @@ public class UiService {
 
   }
 
-  public User[] getEncryptedUsers() throws Exception {
+  public User[] getEncryptedUsers() {
     var result = rt().getForObject(apiAddress + "/api/v1/get-encrypted-users", User[].class);
     log.info("getEncryptedUsers:{}", (Object)result);
     return result;
   }
 
-  public User[] getDefaultTokenizationUsers() throws Exception {
+  public User[] getDefaultTokenizationUsers() {
     var result = rt().getForObject(apiAddress + "/api/v1/get-default-tokenization-users",
       User[].class);
     log.info("getDefaultTokenizationUsers:{}", (Object)result);
     return result;
   }
 
-  public User[] getConvergentTokenizationUsers() throws Exception {
+  public User[] getConvergentTokenizationUsers() {
     var result = rt().getForObject(apiAddress + "/api/v1/get-convergent-tokenization-users",
       User[].class);
     log.info("getConvergentTokenizationUsers:{}", (Object)result);
@@ -100,9 +100,9 @@ public class UiService {
       .build()
       .toString();
 
-    log.info("addOneEncryptedUser: url:[%s]", targetUrl);
+    log.info("addOneEncryptedUser: url:[%1$s]", targetUrl);
     var response = rt().postForObject(targetUrl, entity, String.class);
-    log.info("addOneEncryptedUser: response:[%s]", response);
+    log.info("addOneEncryptedUser: response:[%1$s]", response);
   }
 
   public User getOneDecryptedUser(String username) {
