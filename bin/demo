@@ -4,34 +4,45 @@ set -Eeuo pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPT=${BASH_SOURCE[0]}
 export PROJECT_DIR=${PROJECT_DIR:-$(cd $SCRIPT_DIR/..; pwd)}
+export DOCKER_COMPOSE_DIR=$PROJECT_DIR/docker-compose
+export DOCKER_COMPOSE_FILE=$DOCKER_COMPOSE_DIR/docker-compose.yml
 
-(
+function banner(){
+    echo ================================================================================
+    echo "$@"
+    echo ================================================================================
+}
+function info(){
+  banner Demo Env Information
+  cat <<EOF
+Vault UI       : http://localhost:8200
+YugabyteDB UI  : http://localhost:15433
+Demo App UI    : http://localhost:7070
+SQLPad         : http://localhost:3000
+EOF
+
+}
+function start(){
   set +ex
-  cd $PROJECT_DIR/docker-compose
-  echo ================================================================================
-  echo = Cleanup ======================================================================
-  echo ================================================================================
-  docker-compose down --remove-orphans -v
-  rm scripts/vault.json vault-agent/token vault-agent/role_id vault-agent/secret_id || echo "no leftovers"
-  echo ================================================================================
-  echo = Start ========================================================================
-  echo ================================================================================
-
-  docker-compose up -d
+  banner Start
+  start-infra
+  start-apps
   sleep 10
-  echo ================================================================================
-  echo = Open Browsers ================================================================
-  echo ================================================================================
+  info
+  watch
+}
+function start-infra(){
+  banner Start Infra
+  clean
+  docker-compose -f $DOCKER_COMPOSE_FILE up vault-agent sqlpad -d
+}
+function start-apps(){
+  banner Start Apps
+  docker-compose -f $DOCKER_COMPOSE_FILE up transform-demo-api transform-demo-ui -d
+}
 
-  open http://localhost:8200
-  open http://localhost:15433
-  open http://localhost:7070
-  open http://localhost:3000
-
-  echo ================================================================================
-  echo = Add Sample Data ==============================================================
-  echo ================================================================================
-
+function add-sample-data(){
+  banner Add Sample Data
   curl 'http://localhost:7070/encrypt?transit=1&username=Yogi%20transit&password=passw0rd&email=YogiTransformation@Example.com&creditcard=1111-2222-3333-4444' -X POST
   curl 'http://localhost:7070/encrypt?transformation=1&username=Yogi%20transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=2111-2222-3333-4444' -X POST
   curl 'http://localhost:7070/encrypt?simple-transformation=1&username=Yogi%20simple-transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=3111-2222-3333-4444' -X POST
@@ -39,20 +50,28 @@ export PROJECT_DIR=${PROJECT_DIR:-$(cd $SCRIPT_DIR/..; pwd)}
   curl 'http://localhost:7070/encrypt?default-tokenization=1&username=Yogi%20default-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=2111-5222-3333-4444' -X POST
   curl 'http://localhost:7070/encrypt?convergent-tokenization=1&username=Yogi%20convergent-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=6111-2222-3333-4444' -X POST
 
-  echo ================================================================================
-  echo = Watch Logs ===================================================================
-  echo ================================================================================
+}
 
-
-  docker-compose logs -f
-
-
-)
+function watch(){
+    banner Watch logs
+    docker-compose -f $DOCKER_COMPOSE_FILE logs -f
+}
 
 
 
+function stop(){
+    set +ex
+    banner Stop
+    docker-compose -f $DOCKER_COMPOSE_FILE down --remove-orphans -v
 
+}
 
+function clean(){
+  set +ex
+  stop
+  banner clean
+  rm $DOCKER_COMPOSE_DIR/scripts/vault.json $DOCKER_COMPOSE_DIR/vault-agent/token $DOCKER_COMPOSE_DIR/vault-agent/role_id $DOCKER_COMPOSE_DIR/vault-agent/secret_id || echo "no leftovers"
+}
 
-
-
+OP=${1:-start}; shift
+$OP
