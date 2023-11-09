@@ -1,102 +1,116 @@
 package com.hashicorp.transformdemo.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hashicorp.transformdemo.UiAppUtil;
 import com.hashicorp.transformdemo.model.User;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
 @Service
+@Slf4j
 public class UiService {
 
-    private String apiAddress = System.getenv("API_ADDRESS") != null ? System.getenv("API_ADDRESS") : "http://localhost:8081";
-    private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
+  private String apiAddress =
+    System.getenv("API_ADDRESS") != null ? System.getenv("API_ADDRESS") : "http://localhost:8081";
+  private final RestTemplateBuilder restTemplateBuilder;
 
-    public UiService(RestTemplateBuilder builder, ObjectMapper objectMapper) {
-        this.restTemplate = builder.build();
-        this.objectMapper = objectMapper;
-    }
 
-    public User[] getTransformedUsers() throws Exception {
-        String result = this.restTemplate.getForObject(apiAddress + "/api/v1/get-transformed-users", String.class);
+  public UiService(RestTemplateBuilder builder) {
+    this.restTemplateBuilder = builder;
+  }
 
-        System.out.println(result);
-        User[] userList = this.objectMapper.readValue(result, User[].class);
-        return userList;
-    }
+  private RestTemplate rt() {
+    return restTemplateBuilder.build();
+  }
 
-    public User[] getSimpleTransformedUsers() throws Exception {
-        String result = this.restTemplate.getForObject(apiAddress + "/api/v1/get-simple-transformed-users", String.class);
+  public User[] getTransformedUsers() throws Exception {
+    var result = rt().getForObject(apiAddress + "/api/v1/get-transformed-users", User[].class);
+    log.info("getTransformedUsers:{}", (Object)result);
 
-        System.out.println(result);
-        User[] userList = this.objectMapper.readValue(result, User[].class);
-        return userList;
-    }
+    return result;
+  }
 
-    public User[] getSimplestTransformedUsers() throws Exception {
-        String result = this.restTemplate.getForObject(apiAddress + "/api/v1/get-simplest-transformed-users", String.class);
+  public User[] getSimpleTransformedUsers() throws Exception {
+    var result = rt().getForObject(apiAddress + "/api/v1/get-simple-transformed-users",
+      User[].class);
 
-        System.out.println(result);
-        User[] userList = this.objectMapper.readValue(result, User[].class);
-        return userList;
-    }
+    log.info("getSimpleTransformedUsers:{}", (Object)result);
+    return result;
+  }
 
-    public User[] getEncryptedUsers() throws Exception {
-        String result = this.restTemplate.getForObject(apiAddress + "/api/v1/get-encrypted-users", String.class);
+  public User[] getSimplestTransformedUsers() throws Exception {
+    var result = rt().getForObject(apiAddress + "/api/v1/get-simplest-transformed-users",
+      User[].class);
 
-        User[] userList = this.objectMapper.readValue(result, User[].class);
-        return userList;
-    }
+    log.info("getSimplestTransformedUsers:{}", (Object)result);
+    return result;
 
-    public User[] getDefaultTokenizationUsers() throws Exception {
-        String result = this.restTemplate.getForObject(apiAddress + "/api/v1/get-default-tokenization-users", String.class);
+  }
 
-        User[] userList = this.objectMapper.readValue(result, User[].class);
-        return userList;
-    }
+  public User[] getEncryptedUsers() throws Exception {
+    var result = rt().getForObject(apiAddress + "/api/v1/get-encrypted-users", User[].class);
+    log.info("getEncryptedUsers:{}", (Object)result);
+    return result;
+  }
 
-    public User[] getConvergentTokenizationUsers() throws Exception {
-        String result = this.restTemplate.getForObject(apiAddress + "/api/v1/get-convergent-tokenization-users", String.class);
+  public User[] getDefaultTokenizationUsers() throws Exception {
+    var result = rt().getForObject(apiAddress + "/api/v1/get-default-tokenization-users",
+      User[].class);
+    log.info("getDefaultTokenizationUsers:{}", (Object)result);
+    return result;
+  }
 
-        User[] userList = this.objectMapper.readValue(result, User[].class);
-        return userList;
-    }
+  public User[] getConvergentTokenizationUsers() throws Exception {
+    var result = rt().getForObject(apiAddress + "/api/v1/get-convergent-tokenization-users",
+      User[].class);
+    log.info("getConvergentTokenizationUsers:{}", (Object)result);
+    return result;
+  }
 
-    public void addOneEncryptedUser(String username, String password, String email, String creditcard, String howto) {
-        String targetUrl = "";
+  public void addOneEncryptedUser(String username, String password, String email, String creditcard,
+    String method) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        Map<String, String> input = new LinkedHashMap<>();
-        input.put("username", username);
-        input.put("password", password);
-        input.put("email", email);
-        input.put("creditcard", creditcard);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+    Map<String, String> input = new LinkedHashMap<>();
+    input.put("username", username);
+    input.put("password", password);
+    input.put("email", email);
+    input.put("creditcard", creditcard);
 
-        System.out.println("howto:" + howto);
+    log.info("addOneEncryptedUser/method:{}", method);
 
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(input, headers);
+    HttpEntity<Map<String, String>> entity = new HttpEntity<>(input, headers);
 
-        targetUrl = new UiAppUtil().urlBuilder(apiAddress, howto, username, password, email, creditcard);
-        this.restTemplate.postForObject(targetUrl, entity, String.class);
-    }
+    var targetUrl = UriComponentsBuilder.fromUriString(apiAddress)
+      .path("api/v1/" + method + "/add-user")
+      .queryParam("username", username)
+      .queryParam("password", password)
+      .queryParam("email", email)
+      .queryParam("creditcard", creditcard)
+      .build()
+      .toString();
 
-    public String getOneDecryptedUser(String username) {
-        return this.restTemplate.getForObject(apiAddress + "/api/v1/decrypt?username=" + username, String.class);
-    }
+    log.info("addOneEncryptedUser: url:[%s]", targetUrl);
+    var response = rt().postForObject(targetUrl, entity, String.class);
+    log.info("addOneEncryptedUser: response:[%s]", response);
+  }
 
-    public String getOneDecodedUser(String username, String flag) {
-        return this.restTemplate.getForObject(apiAddress + "/api/v1/decode?username=" + username +"&flag=" + flag, String.class);
-    }
+  public User getOneDecryptedUser(String username) {
+    return rt().getForObject(apiAddress + "/api/v1/decrypt?username=" + username, User.class);
+  }
+
+  public User getOneDecodedUser(String username, String flag) {
+    return rt().getForObject(apiAddress + "/api/v1/decode?username=" + username + "&flag=" + flag,
+      User.class);
+  }
 }
