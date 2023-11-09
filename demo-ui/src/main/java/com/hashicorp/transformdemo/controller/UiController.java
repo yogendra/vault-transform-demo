@@ -1,9 +1,6 @@
 package com.hashicorp.transformdemo.controller;
 
-import static org.springframework.util.ObjectUtils.isEmpty;
-
 import com.hashicorp.transformdemo.service.UiService;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,8 +49,6 @@ public class UiController {
     @RequestParam String email,
     @RequestParam String creditcard,
     @RequestParam String method) {
-
-
 
     this.uiService.addOneEncryptedUser(
       username,
