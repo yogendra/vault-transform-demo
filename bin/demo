@@ -50,7 +50,6 @@ function status(){
 }
 function start-infra(){
   banner Start Infra
-  clean
   docker-compose -f $DOCKER_COMPOSE_FILE up vault-agent sqlpad -d
 }
 function start-apps(){
