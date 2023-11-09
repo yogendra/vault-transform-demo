@@ -42,11 +42,11 @@ public class VaultApiClient {
   }
 
   @Data
-  static class VResponse {
+  public static class VResponse {
     VData data;
   }
   @Data
-  static class VData {
+  public static class VData {
 
     @JsonProperty("encoded_value")
     String encodedValue;
