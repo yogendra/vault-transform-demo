@@ -8,14 +8,45 @@ export PROJECT_DIR=${PROJECT_DIR:-$(cd $SCRIPT_DIR/..; pwd)}
 (
   set +ex
   cd $PROJECT_DIR/docker-compose
+  echo ================================================================================
+  echo = Cleanup ======================================================================
+  echo ================================================================================
   docker-compose down --remove-orphans -v
   rm scripts/vault.json vault-agent/token vault-agent/role_id vault-agent/secret_id || echo "no leftovers"
+  echo ================================================================================
+  echo = Start ========================================================================
+  echo ================================================================================
+
   docker-compose up -d
+  sleep 10
+  echo ================================================================================
+  echo = Open Browsers ================================================================
+  echo ================================================================================
+
   open http://localhost:8200
   open http://localhost:15433
   open http://localhost:7070
   open http://localhost:3000
+
+  echo ================================================================================
+  echo = Add Sample Data ==============================================================
+  echo ================================================================================
+
+  curl 'http://localhost:7070/encrypt?transit=1&username=Yogi%20transit&password=passw0rd&email=YogiTransformation@Example.com&creditcard=1111-2222-3333-4444' -X POST
+  curl 'http://localhost:7070/encrypt?transformation=1&username=Yogi%20transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=2111-2222-3333-4444' -X POST
+  curl 'http://localhost:7070/encrypt?simple-transformation=1&username=Yogi%20simple-transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=3111-2222-3333-4444' -X POST
+  curl 'http://localhost:7070/encrypt?simplest-transformation=1&username=Yogi%20simplest-transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=4111-2222-3333-4444' -X POST
+  curl 'http://localhost:7070/encrypt?default-tokenization=1&username=Yogi%20default-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=2111-5222-3333-4444' -X POST
+  curl 'http://localhost:7070/encrypt?convergent-tokenization=1&username=Yogi%20convergent-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=6111-2222-3333-4444' -X POST
+
+  echo ================================================================================
+  echo = Watch Logs ===================================================================
+  echo ================================================================================
+
+
   docker-compose logs -f
+
+
 )
 
 
