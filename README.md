@@ -1,5 +1,13 @@
 # Vault Transform Secrets Engine with YugabyteDB Demo
 
+This demo application demonstrates data protection capabilities of vault with YugabyteDB. Application shows multiple capabilities available for masking, encrypting and tokenizing data.
+
+In this demo, YugabyteDB and Vault together solve 2 key issues:
+1. Protect against credential exposure by using short lived, dynamic credentials.
+2. Protect again data exposur in case of exfiltration
+
+## Demo Architecture
+
 ![Demo Architecture](assets/vault_transform_demo_yb.svg)
 
 - demo-ui is a simple single page application built with Spring Boot
@@ -12,6 +20,8 @@
 - On the Vault server side 3 secrets engines are enabled: database, transform, and transit
   - The database secrets engine integrates with MySQL to generate dynamic DB credentials for the demo-app
   - The transform secrets engine is configured to use MySQL as an external token storage for tokenization
+- YugabyteDB is setup with YSQL. A `demo` database is created on it to store tokenized data. You can use any postgres compatible tool and connect on port `5433` to access SQL interface.
+-
 
 # Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
@@ -27,8 +37,17 @@ bin/demo start
 Access Consoles:
 - [Demo UI](http://localhost:8080)
 - [Vault](http://localhost:8200)
+  - Username: `admin`
+  - Password: `passw0rd`
 - [YugabyteDB UI](http://localhost:15433)
+  - Database: `demo`
+  - Username: `demo`
+  - Password: `passw0rd`
+  - Super User: `yugabyte`
+  - Super User Password: `yugabyte`
 - [SQL Console](http://localhost:3000)
+  - Username: `admin`
+  - Password: `passw0rd`
 
 ![Demo UI](assets/vault_transform_demo_ui.png)
 
