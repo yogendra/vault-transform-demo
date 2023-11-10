@@ -78,11 +78,11 @@ function infra-start(){
     echo "You require a license to run this. Contact Hashicorp for a vault license."
     exit 1
   fi
-  dc up vault-agent sqlpad -d "$@"
+  dc up vault-agent sqlpad -d $@
 }
 function apps-start(){
   banner Start Apps
-  dc up transform-demo-api transform-demo-ui -d "$@"
+  dc up transform-demo-api transform-demo-ui -d $@
 }
 
 
