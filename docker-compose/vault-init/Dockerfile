@@ -1,3 +1,3 @@
-FROM hashicorp/vault-enterprise:latest
+FROM hashicorp/vault:latest
 
-RUN apk add --no-interactive bash jq ncurses
+RUN apk add --no-interactive bash jq ncurses curl
