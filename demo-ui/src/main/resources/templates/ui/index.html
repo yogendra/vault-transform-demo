@@ -7,6 +7,25 @@
     <link href="//fonts.googleapis.com/css?family=Nunito:700"
           rel='stylesheet' type='text/css' />
 
+  <script type="module">
+    import { faker } from 'https://cdn.skypack.dev/@faker-js/faker';
+    faker.seed(42);
+    window.autofill = function(){
+      let firstName = faker.person.firstName();
+      let lastName = faker.person.lastName();
+      let username = faker.internet.userName({firstName, lastName});
+      let email = faker.internet.email({firstName, lastName});
+      let cc = faker.finance.creditCardNumber({ issuer: '63[7-9]#-####-####-###L' });
+      let password = faker.internet.password({length: 20, memorable: true, })
+
+      document.querySelector("#username").value = username;
+      document.querySelector("#email").value = email;
+      document.querySelector("#creditcard").value = cc;
+      document.querySelector("#password").value = password;
+
+    }
+
+  </script>
     <style>
         table {
             width: 1500px;
@@ -92,6 +111,7 @@
     </style>
 
 
+
     <meta charset="UTF-8" />
     <title>HashiCorp Vault Demo</title>
 </head>
@@ -104,10 +124,14 @@
 <div align='center'>
     <form class="pure-form"  th:method="post" th:action="@{/encrypt}" th:object="${user}">
         <fieldset class="pure-group" >
-            <input name="username" type="text" class="pure-input-1-2" placeholder="Username">
-            <input name="email" type="email" class="pure-input-1-2" placeholder="Email (xxxxx@xxxxx.xxx)">
-            <input name="creditcard" type="text" class="pure-input-1-2" placeholder="Credit Card (xxxx-xxxx-xxxx-xxxx)">
-            <input name="password" type="text" class="pure-input-1-2" placeholder="Password">
+            <input id="username" name="username" type="text" class="pure-input-1-2" placeholder="Username">
+            <input id="email" name="email" type="email" class="pure-input-1-2" placeholder="Email (xxxxx@xxxxx.xxx)">
+            <input id="creditcard" name="creditcard" type="text" class="pure-input-1-2" placeholder="Credit Card (xxxx-xxxx-xxxx-xxxx)">
+            <input id="password" name="password" type="text" class="pure-input-1-2" placeholder="Password">
+            <button type="button" class="utton-success pure-button" onclick="autofill(); return false;">
+              <i class="fa fa-magic"> </i><span>Auto Fill</span>
+            </button>
+
         </fieldset>
         <div class='my-parts'>
             <ul>
