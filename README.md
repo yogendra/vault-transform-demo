@@ -30,7 +30,7 @@ In this demo, YugabyteDB and Vault together solve 2 key issues:
 
 ```bash
 export VAULT_LICENSE="....."
-git clone -b yb https://github.com/yogendra/vault-transform-demo.git
+git clone -b demo-ready https://github.com/yogendra/vault-transform-demo.git
 cd vault-transform-demo
 bin/demo start
 ```
