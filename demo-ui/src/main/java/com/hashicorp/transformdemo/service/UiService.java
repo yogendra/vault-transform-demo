@@ -19,7 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class UiService {
 
   private final String apiAddress =
-    System.getenv("API_ADDRESS") != null ? System.getenv("API_ADDRESS") : "http://localhost:8081";
+    System.getenv("API_ADDRESS") != null ? System.getenv("API_ADDRESS") : "http://localhost:7070";
   private final RestTemplateBuilder restTemplateBuilder;
 
 
