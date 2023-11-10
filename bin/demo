@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -Eeuo pipefail
-COMMAND=$0
+COMMAND=$(basename $0)
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPT=${BASH_SOURCE[0]}
 
@@ -18,69 +18,96 @@ function banner(){
 function help(){
   banner Demo Env Information
   cat <<EOF
+Demo of Hashicorp Vault and YugabyteDB. This demo covers, dynamic database credentials provisioning,
+Format preserving encryption (FPE), masking, etc.
+More information visit https://developer.hashicorp.com/vault/ and https://docs.yugabyte.com/
+
 Application and Consoles
+========================
 Vault UI       : http://localhost:8200
 YugabyteDB UI  : http://localhost:15433
-Demo App UI    : http://localhost:7070
+Demo App UI    : http://localhost:8080
 SQLPad         : http://localhost:3000
 
 Useful Commands
-$COMMAND add-sample-data  - add sample data
-$COMMAND help             - this screen
-$COMMAND start            - start infra and apps
-$COMMAND start-apps       - start infra containers
-$COMMAND start-infra      - start infra containers
-$COMMAND stop             - stop demo containers
-$COMMAND truncate-data    - truncate database table
-$COMMAND watch            - look are container logs
+===============
+bin/demo apps-start        - start infra containers
+bin/demo add-sample-data   - add sample data
+bin/demo help              - this screen
+bin/demo dc                - run docker-compose commands
+bin/demo infra-start       - start infra containers
+bin/demo sample-data-clear - clear sample data
+bin/demo sample-data-show  - show sample data
+bin/demo sample-data-add   - add sample data
+bin/demo start             - start infra and apps
+bin/demo stop              - stop demo containers
+bin/demo watch             - look are container logs
+bin/demo ysqlsh            - start the YSQLSH shell
 EOF
-
+}
+function dc(){
+  docker compose -f $DOCKER_COMPOSE_FILE "$@"
+}
+function ysqlsh(){
+  dc exec -e PGPASSWORD=yugabyte -it yugabytedb ysqlsh -h yugabytedb -U yugabyte -d demo -w "$@"
 }
 function start(){
   set +ex
   banner Start
-  start-infra
-  start-apps
+  infra-start
+  apps-start
   sleep 10
   help
 }
+
 function status(){
   banner Status
-  docker-compose -f $DOCKER_COMPOSE_FILE top
+  dc top
 }
-function start-infra(){
-  banner Start Infra
-  docker-compose -f $DOCKER_COMPOSE_FILE up vault-agent sqlpad -d
-}
-function start-apps(){
-  banner Start Apps
-  docker-compose -f $DOCKER_COMPOSE_FILE up transform-demo-api transform-demo-ui -d
-}
-
-function add-sample-data(){
-  banner Add Sample Data
-  curl 'http://localhost:7070/encrypt?transit=1&username=Yogi%20transit&password=passw0rd&email=YogiTransformation@Example.com&creditcard=1111-2222-3333-4444' -X POST
-  curl 'http://localhost:7070/encrypt?transformation=1&username=Yogi%20transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=2111-2222-3333-4444' -X POST
-  curl 'http://localhost:7070/encrypt?simple-transformation=1&username=Yogi%20simple-transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=3111-2222-3333-4444' -X POST
-  curl 'http://localhost:7070/encrypt?simplest-transformation=1&username=Yogi%20simplest-transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=4111-2222-3333-4444' -X POST
-  curl 'http://localhost:7070/encrypt?default-tokenization=1&username=Yogi%20default-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=2111-5222-3333-4444' -X POST
-  curl 'http://localhost:7070/encrypt?convergent-tokenization=1&username=Yogi%20convergent-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=6111-2222-3333-4444' -X POST
-}
-function truncate-data(){
-  docker-compose -f $DOCKER_COMPOSE_FILE exec -e PGPASSWORD=yugabyte -it yugabytedb ysqlsh -h yugabytedb -d demo -U yugabyte -c 'TRUNCATE TABLE users_tokenization;'
-}
-
-function watch(){
-    banner Watch logs
-    docker-compose -f $DOCKER_COMPOSE_FILE logs -f
-}
-
 function stop(){
     set +ex
     banner Stop
-    docker-compose -f $DOCKER_COMPOSE_FILE down --remove-orphans -v
+    dc down --remove-orphans -v
     rm $DOCKER_COMPOSE_DIR/scripts/vault.json $DOCKER_COMPOSE_DIR/vault-agent/token $DOCKER_COMPOSE_DIR/vault-agent/role_id $DOCKER_COMPOSE_DIR/vault-agent/secret_id || echo "no leftovers"
 }
 
+function infra-start(){
+  banner Start Infra
+  if [[ -z $VAULT_LICENSE ]]; then
+    echo "VAULT_LICENSE environment variable not set. Set it by running export VAULT_LICENSE=...."
+    echo "You require a license to run this. Contact Hashicorp for a vault license."
+    exit 1
+  fi
+  dc up vault-agent sqlpad -d "$@"
+}
+function apps-start(){
+  banner Start Apps
+  dc up transform-demo-api transform-demo-ui -d "$@"
+}
+
+
+function sample-data-add(){
+  banner Add Sample Data
+  curl 'http://localhost:8080/encrypt?transit=1&username=Yogi%20transit&password=passw0rd&email=YogiTransformation@Example.com&creditcard=1111-2222-3333-4444' -X POST
+  curl 'http://localhost:8080/encrypt?transformation=1&username=Yogi%20transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=2111-2222-3333-4444' -X POST
+  curl 'http://localhost:8080/encrypt?simple-transformation=1&username=Yogi%20simple-transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=3111-2222-3333-4444' -X POST
+  curl 'http://localhost:8080/encrypt?simplest-transformation=1&username=Yogi%20simplest-transformation&password=passw0rd&email=YogiTransformation@Example.com&creditcard=4111-2222-3333-4444' -X POST
+  curl 'http://localhost:8080/encrypt?default-tokenization=1&username=Yogi%20default-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=2111-5222-3333-4444' -X POST
+  curl 'http://localhost:8080/encrypt?convergent-tokenization=1&username=Yogi%20convergent-tokenization&password=passw0rd&email=YogiTransformation@Example.com&creditcard=6111-2222-3333-4444' -X POST
+}
+function sample-data-clear(){
+  banner Truncate data in users_tokenization table
+  ysqlsh -c 'TRUNCATE TABLE users_tokenization;'
+}
+function sample-data-show(){
+  banner Truncate data in users_tokenization table
+    ysqlsh -c 'SELECT * from users_tokenization;'
+}
+function watch(){
+    banner Watch logs
+    dc logs -f "$@"
+}
+
+
 OP=${1:-start}; shift
-$OP
+$OP "$@"
