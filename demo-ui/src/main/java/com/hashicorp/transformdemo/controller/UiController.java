@@ -2,15 +2,18 @@ package com.hashicorp.transformdemo.controller;
 
 import com.hashicorp.transformdemo.service.UiService;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @Slf4j
-public class UiController {
+public class UiController implements ErrorController {
 
 
   private final UiService uiService;
@@ -19,6 +22,11 @@ public class UiController {
     this.uiService = uiService;
   }
 
+  @RequestMapping("/error")
+  public String handleError() {
+        //do something like logging
+        return "ui/error";
+  }
   @GetMapping(value = "/")
   public String home(Model model) throws Exception {
     model.addAttribute("eusers", this.uiService.getEncryptedUsers());
