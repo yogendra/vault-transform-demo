@@ -15,7 +15,6 @@ RUN ./mvnw -B clean package -DskipDockerBuild -DskipTests
 
 FROM ${JRE_IMAGE}:${JRE_IMAGE_TAG} as main
 
-RUN mkdir /app
 WORKDIR /app
 
 COPY --from=build /src/target/transform-demo-ui-0.0.1-SNAPSHOT.jar /app/transform-demo-ui-0.0.1-SNAPSHOT.jar
