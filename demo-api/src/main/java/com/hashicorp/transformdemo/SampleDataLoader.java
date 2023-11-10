@@ -27,7 +27,7 @@ public class SampleDataLoader implements ApplicationListener<ApplicationReadyEve
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-    if (!config.isSkipLoadingSampleData()) {
+    if (config.isSkipLoadingSampleData()) {
       log.info("Skip loading sample data");
       return;
     }
