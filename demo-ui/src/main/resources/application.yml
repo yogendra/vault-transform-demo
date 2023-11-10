@@ -3,3 +3,7 @@ spring:
     name: vault-transform-demo-ui
 server:
   port: 8080
+  error:
+    path: /error
+    whitelabel:
+      enabled: false
