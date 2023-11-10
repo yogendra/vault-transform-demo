@@ -12,7 +12,7 @@
   <script type="module">
     import {faker} from 'https://cdn.skypack.dev/@faker-js/faker';
 
-    faker.seed(42);
+    faker.seed(new Date().getTime());
     window.autofill = function () {
       let firstName = faker.person.firstName();
       let lastName = faker.person.lastName();
