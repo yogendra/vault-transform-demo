@@ -62,7 +62,7 @@ function start(){
 
 function status(){
   banner Status
-  dc top
+  dc ps
 }
 function stop(){
     set +ex
