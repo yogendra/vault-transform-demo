@@ -32,8 +32,14 @@ In this demo, YugabyteDB and Vault together solve 2 key issues:
 export VAULT_LICENSE="....."
 git clone -b demo-ready https://github.com/yogendra/vault-transform-demo.git
 cd vault-transform-demo
+bin/demo prepare
 bin/demo start
 ```
+
+`bin/demo prepare` is optional. But if you encounter error in the `demo start` due to error in
+connecting to alpine repo urls, you can use `prepare` to putll pre-built image.
+
+
 Access Consoles:
 - [Demo UI](http://localhost:8080)
 - [Vault](http://localhost:8200)
