@@ -36,6 +36,7 @@ bin/demo add-sample-data   - add sample data
 bin/demo help              - this screen
 bin/demo dc                - run docker-compose commands
 bin/demo infra-start       - start infra containers
+bin/demo prepare           - prepare for demoe. pull images for running demo
 bin/demo sample-data-clear - clear sample data
 bin/demo sample-data-show  - show sample data
 bin/demo sample-data-add   - add sample data
@@ -106,6 +107,10 @@ function sample-data-show(){
 function watch(){
     banner Watch logs
     dc logs -f "$@"
+}
+
+function prepare(){
+  dc pull
 }
 
 

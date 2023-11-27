@@ -63,6 +63,7 @@ services:
 
   ## Vault Initialization Job
   vault-init:
+    image: yogendra/vault-iniit:1.15
     build:
       context: ./vault-init
       dockerfile: Dockerfile
