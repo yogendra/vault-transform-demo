@@ -7,6 +7,8 @@ services:
     image: yogendra/yb-vault-demo-transform-demo-ui
     container_name: transform-demo-ui
     restart: always
+    build:
+      context: ../demo-ui
     ports:
       - "8080:8080"
     environment:
@@ -21,6 +23,8 @@ services:
     image: yogendra/yb-vault-demo-transform-demo-api
     container_name: transform-demo-api
     restart: always
+    build:
+      context: ../demo-api
     ports:
       - "7070:7070"
     environment:
@@ -60,6 +64,11 @@ services:
   ## Vault Initialization Job
   vault-init:
     image: yogendra/yb-vault-demo-vault-init:1.15
+    build:
+      context: ./vault-init
+      dockerfile: Dockerfile
+      args:
+        - VAULT_IMAGE=hashicorp/vault:1.15
     restart: on-failure
     volumes:
       - ./:/vault
@@ -244,7 +253,8 @@ services:
 
   ## SQLPage - Browser based Sql / Query console
   sqlpad:
-
+    # To use Dockerfile at root of this project, use build instead of image
+    # build: ../../
     image: sqlpad/sqlpad:6.11.2
     hostname: "sqlpad"
     container_name: sqlpad
