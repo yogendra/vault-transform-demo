@@ -7,7 +7,7 @@ SCRIPT=${BASH_SOURCE[0]}
 
 export PROJECT_DIR=${PROJECT_DIR:-$(cd $SCRIPT_DIR/..; pwd)}
 export DOCKER_COMPOSE_DIR=$PROJECT_DIR/docker-compose
-export DOCKER_COMPOSE_FILE=$DOCKER_COMPOSE_DIR/docker-compose.yml
+export DOCKER_COMPOSE_FILE=${DOCKER_COMPOSE_FILE:-$DOCKER_COMPOSE_DIR/docker-compose.yml}
 export DOCKER_REGISTRY=${DOCKER_REGISTRY:-yogendra}
 export UI_IMAGE_NAME=yb-vault-demo-transform-demo-ui
 export API_IMAGE_NAME=yb-vault-demo-transform-demo-api
