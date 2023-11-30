@@ -3,3 +3,12 @@ spring:
     url: jdbc:mysql://localhost:3306/demo?allowPublicKeyRetrieval=true&useSSL=false
 server:
   port: 7070
+---
+spring:
+  config:
+    activate:
+      on-profile: yugabyte | yb | ybdb
+  datasource:
+    url: jdbc:postgresql://localhost:5433/demo
+    username: yugabyte
+
