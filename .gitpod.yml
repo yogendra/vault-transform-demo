@@ -4,8 +4,8 @@ tasks:
     command:  bin/demo start
 
 ports:
-  - name: vault
-    description: Vault
+  - name: sqlpad
+    description: SQLPad - SQL Queries Executor
     port: 3000
     onOpen: ignore
   - name: ysql
@@ -19,6 +19,22 @@ ports:
   - name: yugabyted-master
     description: YugabyteDB Master UI
     port: 7000
+    onOpen: ignore
+  - name: demo-api
+    description: Demo App API
+    port: 7070
+    onOpen: ignore
+  - name: demo-ui
+    description: Demo App UI
+    port: 8080
+    onOpen: ignore
+  - name: vault-agent
+    description: Vault Aget for Demo App
+    port: 8100
+    onOpen: ignore
+  - name: vault
+    description: Vault
+    port: 8200
     onOpen: ignore
   - name: yugabyted-tserver
     description: YugabyteDB Tserver UI
