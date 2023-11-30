@@ -39,7 +39,7 @@ ports:
     port: 8080
     onOpen: open-browser
   - name: vault-agent
-    description: Vault Aget for Demo App
+    description: Vault Agent for Demo App
     port: 8100
     onOpen: ignore
   - name: vault
