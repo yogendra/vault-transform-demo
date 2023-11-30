@@ -1,6 +1,6 @@
 # Vault Transform Secrets Engine with YugabyteDB Demo
 
-[![Open in Gitpod][logo-gitpod]][gp-yb]
+[![Open in Gitpod][logo-gitpod]][gp-yb] (Use Large class - 8vCPU)
 
 This demo application demonstrates data protection capabilities of vault with YugabyteDB. Application shows multiple capabilities available for masking, encrypting and tokenizing data.
 
