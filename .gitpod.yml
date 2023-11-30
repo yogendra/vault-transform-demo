@@ -1,0 +1,31 @@
+tasks:
+  - name: demo
+    init: bin/demo prepare
+    command:  bin/demo start
+
+ports:
+  - name: vault
+    description: Vault
+    port: 3000
+    onOpen: ignore
+  - name: ysql
+    description: YugabyteDB YSQL API
+    port: 5433
+    onOpen: ignore
+  - name: ycql
+    description: YugabyteDB YCQL API
+    port: 9042
+    onOpen: ignore
+  - name: yugabyted-master
+    description: YugabyteDB Master UI
+    port: 7000
+    onOpen: ignore
+  - name: yugabyted-tserver
+    description: YugabyteDB Tserver UI
+    port: 9000
+    onOpen: ignore
+  - name: yugabyted-ui
+    description: YugabyteDB Cluster UI
+    port: 15433
+    onOpen: ignore
+
