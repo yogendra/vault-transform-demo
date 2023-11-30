@@ -1,13 +1,23 @@
 tasks:
   - name: demo
     init: bin/demo prepare
-    command:  bin/demo start
-
+    command: |
+      bin/demo start
+      gp ports await 8200
+      gp ports await 15433
+      gp ports await 8080
+      gp ports await 3000
+      gp ports list
+      gp sync-done start
+  - name: ysqlsh
+    command: |
+      gp sync-await demo
+      bin/demo ysqlsh
 ports:
   - name: sqlpad
     description: SQLPad - SQL Queries Executor
     port: 3000
-    onOpen: ignore
+    onOpen: open-browser
   - name: ysql
     description: YugabyteDB YSQL API
     port: 5433
@@ -19,7 +29,7 @@ ports:
   - name: yugabyted-master
     description: YugabyteDB Master UI
     port: 7000
-    onOpen: ignore
+    onOpen: open-browser
   - name: demo-api
     description: Demo App API
     port: 7070
@@ -27,7 +37,7 @@ ports:
   - name: demo-ui
     description: Demo App UI
     port: 8080
-    onOpen: ignore
+    onOpen: open-browser
   - name: vault-agent
     description: Vault Aget for Demo App
     port: 8100
@@ -35,13 +45,13 @@ ports:
   - name: vault
     description: Vault
     port: 8200
-    onOpen: ignore
+    onOpen: open-browser
   - name: yugabyted-tserver
     description: YugabyteDB Tserver UI
     port: 9000
-    onOpen: ignore
+    onOpen: open-browser
   - name: yugabyted-ui
     description: YugabyteDB Cluster UI
     port: 15433
-    onOpen: ignore
+    onOpen: open-browser
 
