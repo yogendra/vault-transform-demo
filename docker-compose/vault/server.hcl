@@ -16,6 +16,7 @@ cluster_addr = "https://vault:8201"
 
 cluster_name = "primary"
 ui = "true"
+disable_mlock = "true"
 
 telemetry {
   disable_hostname = true
