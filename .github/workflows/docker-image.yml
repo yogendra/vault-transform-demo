@@ -64,7 +64,7 @@ jobs:
         tags: |
           ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:latest
           ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:${{ needs.prepare.outputs.build-time }}
-          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:${GITHUB_SHA}
+          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:${{ github.sha }}
           
   
   build-api:
@@ -94,7 +94,7 @@ jobs:
         tags: |
           ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-api:latest
           ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-api:${{ needs.prepare.outputs.build-time }}
-          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-api:${GITHUB_SHA}
+          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-api:${{ github.sha }}
         
   
   build-vault-init:
@@ -124,5 +124,5 @@ jobs:
         tags: |
           ${{secrets.DOCKERHUB_REGISTRY}}/vault-init:latest
           ${{secrets.DOCKERHUB_REGISTRY}}/vault-init:${{ needs.prepare.outputs.build-time }}
-          ${{secrets.DOCKERHUB_REGISTRY}}/vault-init:${GITHUB_SHA}
+          ${{secrets.DOCKERHUB_REGISTRY}}/vault-init:${{ github.sha }}
 
