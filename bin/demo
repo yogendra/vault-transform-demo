@@ -38,7 +38,6 @@ Useful Commands
 bin/demo apps-start        - start infra containers
 bin/demo add-sample-data   - add sample data
 bin/demo build-containers  - build containers
-bin/demo demo-ready        - setup demo-ready tags
 bin/demo help              - this screen
 bin/demo dc                - run docker-compose commands
 bin/demo infra-start       - start infra containers
@@ -104,13 +103,6 @@ function container-build(){
   docker buildx build --platform linux/arm64,linux/amd64 -t $DOCKER_REGISTRY/$API_IMAGE_NAME:latest --push $PROJECT_DIR/demo-api
   docker buildx build --platform linux/arm64,linux/amd64 --build-arg VAULT_IMAGE=hashicorp/vault:1.15 -t $DOCKER_REGISTRY/$VAULT_INIT_IMAGE_NAME:1.15 --push $PROJECT_DIR/docker-compose/vault-init
 }
-function demo-ready(){
-  git tag -f demo-ready
-  git tag -f demo-ready-$(date +%Y%m%d%H%M%S)
-  git push --tags --force
-}
-
-
 
 function sample-data-add(){
   banner Add Sample Data
