@@ -38,6 +38,10 @@ jobs:
     needs: prepare
     if: ${{ needs.prepare.outputs.ui == 'true'  || needs.prepare.outputs.workflows == 'true' }}
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
@@ -60,6 +64,10 @@ jobs:
     needs: prepare
     if: ${{ needs.prepare.outputs.api == 'true'  || needs.prepare.outputs.workflows == 'true'  }}
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
@@ -82,6 +90,10 @@ jobs:
     needs: prepare
     if: ${{ needs.prepare.outputs.vault-init == 'true'  || needs.prepare.outputs.workflows == 'true'  }}
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
