@@ -36,9 +36,8 @@ public class VaultApiClient {
     String url = String.format("%1$s://%2$s:%3$s/%4$s", vaultScheme, vaultHost, vaultPort, api);
 
     log.debug("postToVault: api:[{}], params:[{}]", api, input);
-
-    return new RestTemplate().postForObject(url, entity, VResponse.class)
-      .getData();
+    var response = new RestTemplate().postForObject(url, entity, VResponse.class);
+    return response != null && response.getData() != null ? response.getData() : null;
   }
 
   @Data
