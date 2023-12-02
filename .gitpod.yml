@@ -13,11 +13,13 @@ tasks:
   - name: yugabytedb-shell
     command: |
       gp sync-await demo-start
+      direnv allow
       bin/demo yugabytedb-shell
 
   - name: vault-shell
     command: |
       gp sync-await demo-start
+      direnv allow
       bin/demo vault-shell
       
 ports:
