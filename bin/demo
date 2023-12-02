@@ -48,15 +48,23 @@ bin/demo sample-data-show  - show sample data
 bin/demo sample-data-add   - add sample data
 bin/demo start             - start infra and apps
 bin/demo stop              - stop demo containers
+bin/demo vault-shell       - vault shell
 bin/demo watch             - look are container logs
 bin/demo ysqlsh            - start the YSQLSH shell
+bin/demo yugabtyedb-shell  - yugabytedb shell
 EOF
 }
 function dc(){
   docker compose -f $DOCKER_COMPOSE_FILE "$@"
 }
 function ysqlsh(){
-  dc exec -e PGPASSWORD=yugabyte -it yugabytedb ysqlsh -h yugabytedb -U yugabyte -d demo -w "$@"
+  dc exec -e PGPASSWORD=yugabyte -it yugabytedb-1 ysqlsh -h yugabytedb -U yugabyte -d demo -w "$@"
+}
+function vault-shell(){
+  dc exec -e VAULT_TOKEN=$VAULT_TOKEN -e VAULT_ADDR=http://localhost:8200 -it vault sh -l
+}
+function yugabytedb-shell(){
+  dc exec -e PGPASSWORD=yugabyte -e PGHOST=yugabytedb-1.local -it yugabytedb-1 bash -l 
 }
 function start(){
   set +ex
@@ -119,7 +127,7 @@ function sample-data-clear(){
 }
 function sample-data-show(){
   banner Truncate data in users_tokenization table
-    ysqlsh -c 'SELECT * from users_tokenization;'
+  ysqlsh -c 'SELECT * from users_tokenization;'
 }
 function watch(){
     banner Watch logs
