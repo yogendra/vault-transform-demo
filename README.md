@@ -1,6 +1,6 @@
 # Vault Transform Secrets Engine with YugabyteDB Demo
 
-[![Open in Gitpod][logo-gitpod]][gp-yb]
+[![Open in Gitpod][logo-gitpod]][gp-launch]
 
 This demo application demonstrates data protection capabilities of vault with YugabyteDB. Application shows multiple capabilities available for masking, encrypting and tokenizing data.
 
@@ -32,7 +32,7 @@ In this demo, YugabyteDB and Vault together solve 2 key issues:
 
 ```bash
 export VAULT_LICENSE="....."
-git clone -b demo-ready https://github.com/yogendra/vault-transform-demo.git
+git clone https://github.com/yogendra/vault-transform-demo.git
 cd vault-transform-demo
 bin/demo prepare
 bin/demo start
@@ -88,4 +88,4 @@ bin/demo ysqlsh            - start the YSQLSH shell
 
 
 [logo-gitpod]: https://gitpod.io/button/open-in-gitpod.svg
-[gp-yb]: https://gitpod.io/#https://github.com/yogendra/vault-transform-demo/tree/demo-ready
+[gp-launch]: https://gitpod.io/#https://github.com/yogendra/vault-transform-demo
