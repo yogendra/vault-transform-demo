@@ -27,11 +27,15 @@ jobs:
             - 'docker-compose/vault-init/**'
           workflows:
             - '.github/workflows/**'
+    - name: build time
+      id: build-time
+      run: echo "::set-output name=timestamp::$(date -u +%Y%m%d%H%M%S)"
     outputs:
       ui: ${{ steps.changes.outputs.ui }}
       api: ${{ steps.changes.outputs.api }}
       vault-init: ${{ steps.changes.outputs.vault-init }}
       workflows: ${{ steps.changes.outputs.workflows}}
+      build-time: ${{ steps.build-time.outputs.timespamp }}
       
   build-ui:
     runs-on: ubuntu-latest
@@ -57,7 +61,11 @@ jobs:
         context: demo-ui/
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:latest
+        ags: |
+          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:latest
+          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:${{ needs.prepare.outputs.build-time }}
+          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:${GITHUB_SHA}
+          
   
   build-api:
     runs-on: ubuntu-latest
@@ -83,7 +91,11 @@ jobs:
         context: demo-api/
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-api:latest
+        tags: |
+          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-api:latest
+          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-api:${{ needs.prepare.outputs.build-time }}
+          ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-api:${GITHUB_SHA}
+        
   
   build-vault-init:
     runs-on: ubuntu-latest
@@ -109,5 +121,8 @@ jobs:
         context: docker-compose/vault-init/
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{secrets.DOCKERHUB_REGISTRY}}/vault-init:latest
+        tags: |
+          ${{secrets.DOCKERHUB_REGISTRY}}/vault-init:latest
+          ${{secrets.DOCKERHUB_REGISTRY}}/vault-init:${{ needs.prepare.outputs.build-time }}
+          ${{secrets.DOCKERHUB_REGISTRY}}/vault-init:${GITHUB_SHA}
 
