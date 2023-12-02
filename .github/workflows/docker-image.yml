@@ -29,13 +29,13 @@ jobs:
             - '.github/workflows/**'
     - name: build time
       id: build-time
-      run: echo "::set-output name=timestamp::$(date -u +%Y%m%d%H%M%S)"
+      run: echo "timestamp=$(date -u +%Y%m%d%H%M%S)" >> $GITHUB_OUTPUT
     outputs:
       ui: ${{ steps.changes.outputs.ui }}
       api: ${{ steps.changes.outputs.api }}
       vault-init: ${{ steps.changes.outputs.vault-init }}
       workflows: ${{ steps.changes.outputs.workflows}}
-      build-time: ${{ steps.build-time.outputs.timespamp }}
+      build-time: ${{ steps.build-time.outputs.timestamp }}
       
   build-ui:
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
         context: demo-ui/
         platforms: linux/amd64,linux/arm64
         push: true
-        ags: |
+        tags: |
           ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:latest
           ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:${{ needs.prepare.outputs.build-time }}
           ${{secrets.DOCKERHUB_REGISTRY}}/yb-vault-demo-transform-demo-ui:${GITHUB_SHA}
