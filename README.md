@@ -23,11 +23,11 @@ In this demo, YugabyteDB and Vault together solve 2 key issues:
   - The database secrets engine integrates with MySQL to generate dynamic DB credentials for the demo-app
   - The transform secrets engine is configured to use MySQL as an external token storage for tokenization
 - YugabyteDB is setup with YSQL. A `demo` database is created on it to store tokenized data. You can use any postgres compatible tool and connect on port `5433` to access SQL interface.
--
 
 # Prerequisites
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - Vault Enterprise License - Contact Hashicorp for a trial license
+
 # Quick Start
 
 ```bash
