@@ -36,9 +36,9 @@ Setup license variable (one-time)
 1. Open  [Gitpod / User Settings / Variables](https://gitpod.io/user/variables)
 1. Click on *New Variable* button on top right
 1. Fill up following on the *New Varible* window and click *Add Variable*
-    1. Name: *VAULT_LICENSE*
-    1. Value: *<Vaul license text>*
-    1. Scope: *yogendra/vault-transform-demo* (or your own forked repo name)
+    1. Name: `VAULT_LICENSE`
+    1. Value: `<put your own vault license value here>`
+    1. Scope: `yogendra/vault-transform-demo` *(or your own forked repo name)*
 1. Now you can launch gitpod workspace by clickin buton below
 
 [![Open in Gitpod][logo-gitpod]][gp-launch]
