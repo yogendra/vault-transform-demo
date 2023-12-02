@@ -1,7 +1,5 @@
 # Vault Transform Secrets Engine with YugabyteDB Demo
 
-[![Open in Gitpod][logo-gitpod]][gp-launch]
-
 This demo application demonstrates data protection capabilities of vault with YugabyteDB. Application shows multiple capabilities available for masking, encrypting and tokenizing data.
 
 In this demo, YugabyteDB and Vault together solve 2 key issues:
@@ -25,10 +23,27 @@ In this demo, YugabyteDB and Vault together solve 2 key issues:
 - YugabyteDB is setup with YSQL. A `demo` database is created on it to store tokenized data. You can use any postgres compatible tool and connect on port `5433` to access SQL interface.
 
 # Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - Vault Enterprise License - Contact Hashicorp for a trial license
+- Local demo
+  - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- Cloud based demo
+  - [Gitpod account](https://gitpod.io) - easy signup with github account
 
-# Quick Start
+## Gitpod based demo
+
+Setup license variable (one-time)
+
+1. Open  [Gitpod / User Settings / Variables](https://gitpod.io/user/variables)
+1. Click on *New Variable* button on top right
+1. Fill up following on the *New Varible* window and click *Add Variable*
+    1. Name: *VAULT_LICENSE*
+    1. Value: *<Vaul license text>*
+    1. Scope: *yogendra/vault-transform-demo* (or your own forked repo name)
+1. Now you can launch gitpod workspace by clickin buton below
+
+[![Open in Gitpod][logo-gitpod]][gp-launch]
+
+## Local demo
 
 ```bash
 export VAULT_LICENSE="....."
@@ -39,7 +54,7 @@ bin/demo start
 ```
 
 `bin/demo prepare` is optional. But if you encounter error in the `demo start` due to error in
-connecting to alpine repo urls, you can use `prepare` to putll pre-built image.
+connecting to alpine repo urls, you can use `prepare` to pull pre-built image.
 
 
 Access Consoles:
@@ -61,18 +76,24 @@ Access Consoles:
 
 # Useful commands
 ```shell
+Useful Commands
+===============
 bin/demo apps-start        - start infra containers
 bin/demo add-sample-data   - add sample data
+bin/demo build-containers  - build containers
 bin/demo help              - this screen
 bin/demo dc                - run docker-compose commands
 bin/demo infra-start       - start infra containers
+bin/demo prepare           - prepare for demoe. pull images for running demo
 bin/demo sample-data-clear - clear sample data
 bin/demo sample-data-show  - show sample data
 bin/demo sample-data-add   - add sample data
 bin/demo start             - start infra and apps
 bin/demo stop              - stop demo containers
+bin/demo vault-shell       - vault shell
 bin/demo watch             - look are container logs
 bin/demo ysqlsh            - start the YSQLSH shell
+bin/demo yugabtyedb-shell  - yugabytedb shell
 ```
 
 # Reference
@@ -89,3 +110,4 @@ bin/demo ysqlsh            - start the YSQLSH shell
 
 [logo-gitpod]: https://gitpod.io/button/open-in-gitpod.svg
 [gp-launch]: https://gitpod.io/#https://github.com/yogendra/vault-transform-demo
+
