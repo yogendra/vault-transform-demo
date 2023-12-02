@@ -1,5 +1,7 @@
 # Vault Transform Secrets Engine with YugabyteDB Demo
 
+[![Build Docker Images](https://github.com/yogendra/vault-transform-demo/actions/workflows/docker-image.yml/badge.svg)](https://github.com/yogendra/vault-transform-demo/actions/workflows/docker-image.yml)
+
 This demo application demonstrates data protection capabilities of vault with YugabyteDB. Application shows multiple capabilities available for masking, encrypting and tokenizing data.
 
 In this demo, YugabyteDB and Vault together solve 2 key issues:
