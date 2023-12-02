@@ -8,16 +8,23 @@ tasks:
       gp ports await 8080
       gp ports await 3000
       gp ports list
-      gp sync-done start
-  - name: ysqlsh
+      gp sync-done demo-start
+
+  - name: yugabytedb-shell
     command: |
-      gp sync-await demo
-      bin/demo ysqlsh
+      gp sync-await demo-start
+      bin/demo yugabytedb-shell
+
+  - name: vault-shell
+    command: |
+      gp sync-await demo-start
+      bin/demo vault-shell
+      
 ports:
   - name: sqlpad
     description: SQLPad - SQL Queries Executor
     port: 3000
-    onOpen: open-browser
+    onOpen: ignore
   - name: ysql
     description: YugabyteDB YSQL API
     port: 5433
@@ -29,7 +36,7 @@ ports:
   - name: yugabyted-master
     description: YugabyteDB Master UI
     port: 7000
-    onOpen: open-browser
+    onOpen: ignore
   - name: demo-api
     description: Demo App API
     port: 7070
@@ -37,7 +44,7 @@ ports:
   - name: demo-ui
     description: Demo App UI
     port: 8080
-    onOpen: open-browser
+    onOpen: ignore
   - name: vault-agent
     description: Vault Agent for Demo App
     port: 8100
@@ -45,13 +52,13 @@ ports:
   - name: vault
     description: Vault
     port: 8200
-    onOpen: open-browser
+    onOpen: ignore
   - name: yugabyted-tserver
     description: YugabyteDB Tserver UI
     port: 9000
-    onOpen: open-browser
+    onOpen: ignore
   - name: yugabyted-ui
     description: YugabyteDB Cluster UI
     port: 15433
-    onOpen: open-browser
+    onOpen: ignore
 
