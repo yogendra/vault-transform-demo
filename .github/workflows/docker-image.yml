@@ -25,15 +25,18 @@ jobs:
             - 'demo-api/**'       
           vault-init:
             - 'docker-compose/vault-init/**'
+          workflows:
+            - '.github/workflows/**'
     outputs:
       ui: ${{ steps.changes.outputs.ui }}
       api: ${{ steps.changes.outputs.api }}
       vault-init: ${{ steps.changes.outputs.vault-init }}
+      workflows: ${{ steps.changes.outputs.workflows}}
       
   build-ui:
     runs-on: ubuntu-latest
     needs: prepare
-    if: ${{ needs.prepare.outputs.ui == 'true' }}
+    if: ${{ needs.prepare.outputs.ui == 'true'  || needs.prepare.outputs.workflows == 'true' }}
     steps:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -55,7 +58,7 @@ jobs:
   build-api:
     runs-on: ubuntu-latest
     needs: prepare
-    if: ${{ needs.prepare.outputs.api == 'true' }}
+    if: ${{ needs.prepare.outputs.api == 'true'  || needs.prepare.outputs.workflows == 'true'  }}
     steps:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -77,7 +80,7 @@ jobs:
   build-vault-init:
     runs-on: ubuntu-latest
     needs: prepare
-    if: ${{ needs.prepare.outputs.vault-init == 'true' }}
+    if: ${{ needs.prepare.outputs.vault-init == 'true'  || needs.prepare.outputs.workflows == 'true'  }}
     steps:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
